@@ -5,6 +5,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class Player : MonoBehaviour
     private float normalSpeed;
     private float xp = 0;
     private float forLvl = 100;
+    public int lvlCount = 1;
+    
     public float speedMulti = 4f;
     // Start is called before the first frame update
     void Start()
@@ -28,11 +31,12 @@ public class Player : MonoBehaviour
     {
         var x = Input.GetAxisRaw("Horizontal");
         var z = Input.GetAxisRaw("Vertical");
-        xp++;
+        //xp++;
         if (xp >=   forLvl)
         {
             xp -=forLvl;
             forLvl = forLvl*1.25f;
+            ++lvlCount;
 
         }
         if(Input.GetKey(KeyCode.LeftShift))
@@ -48,11 +52,13 @@ public class Player : MonoBehaviour
         xpForLvl.text = forLvl.ToString("F2");
         player.position += new Vector3(x,0,z).normalized * speed * Time.deltaTime;
     }
-    void OnCollision3D(Collider collider)
+    void OnCollisionEnter(Collision collider)
     {
-        if(collider.CompareTag("Mob"))
+        Debug.Log("touch you");
+        if(collider.gameObject.CompareTag("Mob"))
         {
-            collider.gameObject.SetActive(false);   
+            xp = xp+100;
+            Destroy(collider.gameObject);   
         }
     }
 }
